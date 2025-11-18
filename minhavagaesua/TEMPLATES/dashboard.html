@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Header do Usuário -->
+<div class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">
+                {{ user['nome'][0] }}
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-gray-900">{{ user['nome'] }}</h1>
+                <p class="text-sm text-gray-500">Nota: <span class="font-mono font-bold text-black">{{ user['media_final'] }}</span> | Classificação Original: {{ user['classificacao_original'] }}</p>
+            </div>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{{ url_for('alterar_lotacao') }}" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium text-sm shadow-sm">
+                Alterar Lotação
+            </a>
+            <a href="{{ url_for('logout') }}" class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg text-sm font-medium">
+                Sair
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+
+    <!-- Tabs de Navegação (Alpine.js seria bom aqui, mas vamos usar JS puro simples) -->
+    <div class="mb-8">
+        <div class="flex space-x-2 border-b border-gray-200">
+            {% for key, data in rankings.items() %}
+                <button onclick="openTab('tab-{{ loop.index }}')" class="tab-btn px-6 py-3 font-medium text-gray-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none transition" id="btn-tab-{{ loop.index }}">
+                    {{ data.cidade }} <span class="ml-2 text-xs bg-gray-100 px-2 py-1 rounded-full">{{ key }}</span>
+                </button>
+            {% endfor %}
+            <button onclick="openTab('tab-geral')" class="tab-btn px-6 py-3 font-medium text-gray-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none transition" id="btn-tab-geral">
+                Ranking Geral
+            </button>
+        </div>
+    </div>
+
+    <!-- Conteúdo dos Rankings -->
+    
+    <!-- Rankings Personalizados -->
+    {% for key, data in rankings.items() %}
+    <div id="tab-{{ loop.index }}" class="tab-content hidden animate-fade-in">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 text-lg">Ranking em Tempo Real: {{ data.cidade }}</h3>
+                <span class="text-sm text-gray-500">Total concorrendo: {{ data.lista|length }}</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
+                        <tr>
+                            <th class="px-6 py-3">Posição</th>
+                            <th class="px-6 py-3">Candidato</th>
+                            <th class="px-6 py-3">Nota</th>
+                            <th class="px-6 py-3">Status da Escolha</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for row in data.lista %}
+                        <tr class="hover:bg-blue-50 transition {% if row['nome'] == user['nome'] %}bg-blue-50 border-l-4 border-blue-500{% endif %}">
+                            <td class="px-6 py-4 font-bold text-gray-700">
+                                #{{ loop.index }}
+                            </td>
+                            <td class="px-6 py-4 font-medium text-gray-900">
+                                {{ row['nome'] }}
+                                {% if row['nome'] == user['nome'] %} <span class="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Você</span>{% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 font-mono">
+                                {{ row['media_final'] }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                    {% if '1ª' in row['prioridade'] %} bg-green-100 text-green-800 
+                                    {% elif '2ª' in row['prioridade'] %} bg-yellow-100 text-yellow-800 
+                                    {% else %} bg-gray-100 text-gray-800 {% endif %}">
+                                    {{ row['prioridade'] }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Ranking Geral -->
+    <div id="tab-geral" class="tab-content hidden animate-fade-in">
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <div class="p-6 border-b">
+                <h3 class="font-bold text-gray-800">Classificação Geral (Top 50)</h3>
+            </div>
+            <table class="w-full text-left text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3">Original</th>
+                        <th class="px-6 py-3">Nome</th>
+                        <th class="px-6 py-3">Nota</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    {% for row in ranking_geral %}
+                    <tr class="{% if row['nome'] == user['nome'] %}bg-blue-50 font-bold{% endif %}">
+                        <td class="px-6 py-3">{{ row['classificacao_original'] }}</td>
+                        <td class="px-6 py-3">{{ row['nome'] }}</td>
+                        <td class="px-6 py-3">{{ row['media_final'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function openTab(tabId) {
+        // Esconde todos
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.tab-btn').forEach(el => {
+            el.classList.remove('text-blue-600', 'border-blue-500');
+            el.classList.add('text-gray-500', 'border-transparent');
+        });
+
+        // Mostra o atual
+        document.getElementById(tabId).classList.remove('hidden');
+        
+        // Ativa botão
+        const btn = document.getElementById('btn-' + tabId);
+        if(btn) {
+            btn.classList.remove('text-gray-500', 'border-transparent');
+            btn.classList.add('text-blue-600', 'border-blue-500');
+        }
+    }
+
+    // Abre a primeira aba por padrão
+    const firstTab = document.querySelector('.tab-content');
+    const firstBtn = document.querySelector('.tab-btn');
+    if(firstTab) {
+        openTab(firstTab.id);
+    } else {
+        openTab('tab-geral');
+    }
+</script>
+{% endblock %}

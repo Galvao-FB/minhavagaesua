@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4">
+    <div class="max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden">
+        <div class="bg-gray-900 p-6 text-center">
+            <h1 class="text-2xl font-bold text-white">Portal de Lotação</h1>
+            <p class="text-gray-400 text-sm mt-1">Polícia Civil de Pernambuco</p>
+        </div>
+        
+        <div class="p-8">
+            <form method="POST" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nº de Inscrição</label>
+                    <input type="text" name="inscricao" required 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                        placeholder="Digite seu número de inscrição">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                    <input type="password" name="senha" 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                        placeholder="Deixe em branco no 1º acesso">
+                    <p class="text-xs text-gray-500 mt-2">
+                        Primeiro acesso? Deixe a senha vazia e clique em Entrar.
+                    </p>
+                </div>
+
+                <button type="submit" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-300 transform hover:scale-[1.02]">
+                    Entrar no Sistema
+                </button>
+            </form>
+        </div>
+        <div class="bg-gray-50 p-4 text-center border-t border-gray-100">
+            <p class="text-xs text-gray-500">Dúvidas? Entre em contato com a administração.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

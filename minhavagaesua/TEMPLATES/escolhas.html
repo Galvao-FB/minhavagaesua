@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-10 px-4">
+    
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-700 to-blue-900 p-8 text-white">
+            <h2 class="text-3xl font-bold">
+                {% if primeira_vez %}Bem-vindo à Seleção de Lotação{% else %}Alterar Minhas Preferências{% endif %}
+            </h2>
+            <p class="opacity-90 mt-2">Escolha até 3 cidades para concorrer no ranking.</p>
+        </div>
+
+        <form method="POST" class="p-8 space-y-8" id="formEscolhas">
+            
+            <!-- Opção 1 -->
+            <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 relative">
+                <div class="absolute -top-3 -left-3 bg-blue-600 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold shadow">1</div>
+                <label class="block text-lg font-semibold text-blue-900 mb-2">1ª Opção (Prioritária)</label>
+                <select name="lotacao_1" required class="w-full p-3 rounded-lg border-gray-300 border focus:ring-2 focus:ring-blue-500 shadow-sm">
+                    <option value="">Selecione uma cidade...</option>
+                    {% for cidade in cidades %}
+                        <option value="{{ cidade }}" {% if escolhas and escolhas[0] == cidade %}selected{% endif %}>{{ cidade }}</option>
+                    {% endfor %}
+                </select>
+                <p class="text-sm text-blue-600 mt-2">Esta é sua escolha principal.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Opção 2 -->
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 relative">
+                    <div class="absolute -top-3 -left-3 bg-gray-500 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold shadow">2</div>
+                    <label class="block font-medium text-gray-700 mb-2">2ª Opção (Opcional)</label>
+                    <select name="lotacao_2" class="w-full p-3 rounded-lg border-gray-300 border focus:ring-2 focus:ring-gray-500 shadow-sm">
+                        <option value="">-- Nenhuma --</option>
+                        {% for cidade in cidades %}
+                            <option value="{{ cidade }}" {% if escolhas and escolhas[1] == cidade %}selected{% endif %}>{{ cidade }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Opção 3 -->
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 relative">
+                    <div class="absolute -top-3 -left-3 bg-gray-500 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold shadow">3</div>
+                    <label class="block font-medium text-gray-700 mb-2">3ª Opção (Opcional)</label>
+                    <select name="lotacao_3" class="w-full p-3 rounded-lg border-gray-300 border focus:ring-2 focus:ring-gray-500 shadow-sm">
+                        <option value="">-- Nenhuma --</option>
+                        {% for cidade in cidades %}
+                            <option value="{{ cidade }}" {% if escolhas and escolhas[2] == cidade %}selected{% endif %}>{{ cidade }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-6 border-t">
+                {% if not primeira_vez %}
+                    <a href="{{ url_for('dashboard') }}" class="text-gray-500 hover:text-gray-800 font-medium">Cancelar</a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+                
+                <button type="button" onclick="validarEnvio()" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition transform hover:-translate-y-0.5">
+                    Salvar e Ver Ranking
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function validarEnvio() {
+        const l1 = document.querySelector('[name="lotacao_1"]').value;
+        const l2 = document.querySelector('[name="lotacao_2"]').value;
+        const l3 = document.querySelector('[name="lotacao_3"]').value;
+
+        // Verifica se completou as 3
+        if (l1 && (!l2 || !l3)) {
+            if(!confirm("Atenção: Você não preencheu as 3 opções possíveis. Isso diminui suas chances de alocação. Deseja continuar mesmo assim?")) {
+                return; 
+            }
+        }
+        document.getElementById('formEscolhas').submit();
+    }
+</script>
+{% endblock %}

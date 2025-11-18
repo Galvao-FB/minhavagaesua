@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Alocação PCPE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Notificações Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="fixed top-5 right-5 z-50 space-y-2">
+                {% for category, message in messages %}
+                    <div class="px-6 py-4 rounded shadow-lg text-white 
+                        {% if category == 'error' %}bg-red-500{% elif category == 'success' %}bg-green-600{% else %}bg-blue-500{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    <script>
+        // Remove notificações após 4 segundos
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.fixed > div');
+            alerts.forEach(el => el.style.display = 'none');
+        }, 4000);
+    </script>
+</body>
+</html>
