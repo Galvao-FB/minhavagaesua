@@ -303,7 +303,15 @@ def dashboard():
         vagas_gerais=vagas_gerais,
         minhas_opcoes=minhas_opcoes
     )
+# --------------------------------------------------------------
+# 🚪 ROTA DE LOGOUT – REMOVE A SESSÃO E VOLTA PARA LOGIN
+# --------------------------------------------------------------
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
 
 
 if __name__ == "__main__":
     app.run(debug=True)
+
