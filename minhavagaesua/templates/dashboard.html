@@ -24,39 +24,9 @@
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+<div class="max-w-7xl mx-auto px-4 py-8">
 
-    <!-- NOVA SEÇÃO: CARDS DE VAGAS GERAIS -->
-    <div>
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Vagas por Lotação</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {% for item in vagas_gerais %}
-            <div class="bg-white p-5 rounded-xl shadow border border-gray-100">
-                <h3 class="font-bold text-lg text-gray-700">{{ item.lotacao }}</h3>
-                <p class="text-gray-600 mt-2">Vagas Totais: <span class="font-bold">{{ item.vagas }}</span></p>
-                <p class="text-gray-600">Ocupadas: <span class="font-bold">{{ item.ocupadas }}</span></p>
-                <p class="mt-2 text-gray-800 font-semibold">Disponíveis: <span class="text-green-600">{{ item.vagas - item.ocupadas }}</span></p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- NOVA SEÇÃO: MINHAS OPÇÕES -->
-    <div>
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Minhas Opções</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {% for op in minhas_opcoes %}
-            <div class="bg-blue-50 border border-blue-200 p-5 rounded-xl shadow">
-                <h3 class="font-bold text-lg text-blue-800">{{ op.lotacao }}</h3>
-                <p class="text-gray-700 mt-2">Vagas Totais: <span class="font-semibold">{{ op.vagas }}</span></p>
-                <p class="text-gray-700">Ocupadas: <span class="font-semibold">{{ op.ocupadas }}</span></p>
-                <p class="mt-2 text-blue-800 font-bold">Disponíveis: {{ op.vagas - op.ocupadas }}</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- TABS ORIGINAIS DO RANKING -->
+    <!-- Tabs de Navegação (Alpine.js seria bom aqui, mas vamos usar JS puro simples) -->
     <div class="mb-8">
         <div class="flex space-x-2 border-b border-gray-200">
             {% for key, data in rankings.items() %}
@@ -70,6 +40,8 @@
         </div>
     </div>
 
+    <!-- Conteúdo dos Rankings -->
+    
     <!-- Rankings Personalizados -->
     {% for key, data in rankings.items() %}
     <div id="tab-{{ loop.index }}" class="tab-content hidden animate-fade-in">
@@ -85,24 +57,29 @@
                             <th class="px-6 py-3">Posição</th>
                             <th class="px-6 py-3">Candidato</th>
                             <th class="px-6 py-3">Nota</th>
-                            <th class="px-6 py-3">Opções</th>
+                            <th class="px-6 py-3">Status da Escolha</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         {% for row in data.lista %}
                         <tr class="hover:bg-blue-50 transition {% if row['nome'] == user['nome'] %}bg-blue-50 border-l-4 border-blue-500{% endif %}">
-                            <td class="px-6 py-4 font-bold text-gray-700">#{{ loop.index }}</td>
+                            <td class="px-6 py-4 font-bold text-gray-700">
+                                #{{ loop.index }}
+                            </td>
                             <td class="px-6 py-4 font-medium text-gray-900">
                                 {{ row['nome'] }}
-                                {% if row['nome'] == user['nome'] %}
-                                    <span class="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Você</span>
-                                {% endif %}
+                                {% if row['nome'] == user['nome'] %} <span class="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Você</span>{% endif %}
                             </td>
-                            <td class="px-6 py-4 text-gray-600 font-mono">{{ row['media_final'] }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-700">
-                                1ª: <b>{{ row['lotacao_1'] }}</b><br>
-                                2ª: <b>{{ row['lotacao_2'] }}</b><br>
-                                3ª: <b>{{ row['lotacao_3'] }}</b>
+                            <td class="px-6 py-4 text-gray-600 font-mono">
+                                {{ row['media_final'] }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                    {% if '1ª' in row['prioridade'] %} bg-green-100 text-green-800 
+                                    {% elif '2ª' in row['prioridade'] %} bg-yellow-100 text-yellow-800 
+                                    {% else %} bg-gray-100 text-gray-800 {% endif %}">
+                                    {{ row['prioridade'] }}
+                                </span>
                             </td>
                         </tr>
                         {% endfor %}
@@ -125,9 +102,6 @@
                         <th class="px-6 py-3">Original</th>
                         <th class="px-6 py-3">Nome</th>
                         <th class="px-6 py-3">Nota</th>
-                        <th class="px-6 py-3">1ª</th>
-                        <th class="px-6 py-3">2ª</th>
-                        <th class="px-6 py-3">3ª</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y">
@@ -136,9 +110,6 @@
                         <td class="px-6 py-3">{{ row['classificacao_original'] }}</td>
                         <td class="px-6 py-3">{{ row['nome'] }}</td>
                         <td class="px-6 py-3">{{ row['media_final'] }}</td>
-                        <td class="px-6 py-3">{{ row['lotacao_1'] }}</td>
-                        <td class="px-6 py-3">{{ row['lotacao_2'] }}</td>
-                        <td class="px-6 py-3">{{ row['lotacao_3'] }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -146,4 +117,35 @@
         </div>
     </div>
 
+</div>
+
+<script>
+    function openTab(tabId) {
+        // Esconde todos
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.tab-btn').forEach(el => {
+            el.classList.remove('text-blue-600', 'border-blue-500');
+            el.classList.add('text-gray-500', 'border-transparent');
+        });
+
+        // Mostra o atual
+        document.getElementById(tabId).classList.remove('hidden');
+        
+        // Ativa botão
+        const btn = document.getElementById('btn-' + tabId);
+        if(btn) {
+            btn.classList.remove('text-gray-500', 'border-transparent');
+            btn.classList.add('text-blue-600', 'border-blue-500');
+        }
+    }
+
+    // Abre a primeira aba por padrão
+    const firstTab = document.querySelector('.tab-content');
+    const firstBtn = document.querySelector('.tab-btn');
+    if(firstTab) {
+        openTab(firstTab.id);
+    } else {
+        openTab('tab-geral');
+    }
+</script>
 {% endblock %}
