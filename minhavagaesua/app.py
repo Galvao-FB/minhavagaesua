@@ -173,7 +173,7 @@ def primeira_escolha():
             """, (l1, l2, l3, session['user_id']))
             conn.commit()
             flash("Preferências salvas! Veja agora a sua classificação.", "success")
-            return redirect(url_for("dashboard"))
+            return render_template("definir_senha.html") # <--- Apenas renderiza a página, mantendo a sessão
 
     cur.close()
     conn.close()
@@ -293,4 +293,5 @@ def dashboard():
 
 if __name__ == "__main__":
     # Em produção, debug deve ser False
+
     app.run(debug=True)
